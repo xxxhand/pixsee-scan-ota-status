@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  myCronJob:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ${IMAGE_NAME}
+    container_name: ${PRJ_NAME}
+    volumes:
+      # 要使用絕對路徑
+      - /Users/wuchaoqiu/Documents/docker-data/${PRJ_NAME}/log:/var/log/${PRJ_NAME}/log
+    # depends_on:
+    #   - mongodb
+    env_file:
+      - .env
+    networks:
+      - default
+    # ports:
+    #   - "3000:3000"
+    # command: yarn start:prod
+    restart: always
+networks:
+    ## 要先用docker network create一個共用網路
+  default:
+    external: true
+    name: docker-data_default
