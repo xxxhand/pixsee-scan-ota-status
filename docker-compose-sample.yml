@@ -9,7 +9,7 @@ services:
     container_name: ${PRJ_NAME}
     volumes:
       # 要使用絕對路徑
-      - /Users/wuchaoqiu/Documents/docker-data/${PRJ_NAME}/log:/var/log/${PRJ_NAME}/log
+      - /home/xxxhand/Documents/docker-data/${PRJ_NAME}/log:/var/log/${PRJ_NAME}/log
     # depends_on:
     #   - mongodb
     env_file:

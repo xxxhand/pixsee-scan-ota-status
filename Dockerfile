@@ -29,8 +29,8 @@ FROM node:iron-slim
 
 # Install logrotate
 RUN apt-get update && apt-get -y install logrotate
-RUN mkdir /var/log/base-nestjs-cron-sample
-COPY logrotate.conf /etc/logrotate.d/base-nestjs-cron-sample
+RUN mkdir /var/log/scan-ota-status
+COPY logrotate.conf /etc/logrotate.d/scan-ota-status
 
 ENV NODE_ENV production
 # USER node
