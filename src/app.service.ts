@@ -67,7 +67,6 @@ export class AppService {
     const warningInfoAry: IWarningInfo[] = [];
     this._isRunning = true;
     await this.db.tryConnect();
-    await this.mailClient.tryVerify();
     // 取前2小時資料
     const useTime = new Date(Date.now() - 60 * 60 * 2 * 1000);
     // const useTime = new Date(2024, 8, 30);

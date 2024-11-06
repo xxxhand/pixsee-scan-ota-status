@@ -38,7 +38,7 @@ import {
     },
     {
       provide: DEFAULT_MAILER,
-      useFactory: (): MailClient => {
+      useFactory: async (): Promise<MailClient> => {
         const opt: IInitialOptions = {
           host: appConf.defaultMailer.host,
           port: appConf.defaultMailer.port,
@@ -49,6 +49,7 @@ import {
         };
         const client = new MailClient();
         client.initialSmtpPool(opt);
+        await client.tryVerify();
         return client;
       },
     },
