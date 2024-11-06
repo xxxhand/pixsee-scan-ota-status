@@ -1,3 +1,4 @@
+import { Readable } from 'node:stream';
 import * as nodemailer from 'nodemailer';
 import { Options } from 'nodemailer/lib/smtp-pool';
 import { CustomValidator } from '@xxxhand/app-common';
@@ -5,7 +6,7 @@ import { CustomValidator } from '@xxxhand/app-common';
 export interface IAttachement {
   fileName: string;
   contentType?: string;
-  content: ReadableStream;
+  content: Readable;
 }
 
 export interface ISendOptions {
@@ -40,9 +41,7 @@ export class MailClient {
       port: opt.port,
       tls: {
         rejectUnauthorized: opt.rejectUnauthorized,
-        minVersion: CustomValidator.nonEmptyString(opt.tlsMinVersion)
-          ? opt.tlsMinVersion
-          : 'TLSv1.2',
+        minVersion: CustomValidator.nonEmptyString(opt.tlsMinVersion) ? opt.tlsMinVersion : 'TLSv1.2',
       },
     };
     if (CustomValidator.nonEmptyString(opt.user)) {
@@ -62,18 +61,11 @@ export class MailClient {
     return this._instance.verify();
   }
 
-  public close(): void {
-    console.log('Close mail client');
-    this._instance.close();
-  }
-
   public async send(opts: ISendOptions): Promise<void> {
     const newOpt = {
       from: opts.from,
       to: opts.to,
-      sender: CustomValidator.nonEmptyString(opts.sender)
-        ? opts.sender
-        : opts.from,
+      sender: CustomValidator.nonEmptyString(opts.sender) ? opts.sender : opts.from,
       subject: opts.subject,
       cc: CustomValidator.nonEmptyArray(opts.cc) ? opts.cc : [],
       bcc: CustomValidator.nonEmptyArray(opts.bcc) ? opts.bcc : [],

@@ -39,8 +39,6 @@ export const appConf: IConfig = {
     user: process.env.DEFAULT_MAIL_USER,
     pass: process.env.DEFAULT_MAIL_PASS,
     sender: process.env.DEFAULT_MAIL_SENDER,
-    receiver: CustomValidator.nonEmptyString(process.env.DEFAULT_MAIL_RECEVIER)
-      ? process.env.DEFAULT_MAIL_RECEVIER.split('|')
-      : [],
+    receiver: CustomValidator.nonEmptyString(process.env.DEFAULT_MAIL_RECEVIER) ? process.env.DEFAULT_MAIL_RECEVIER.split('|') : [],
   },
 };

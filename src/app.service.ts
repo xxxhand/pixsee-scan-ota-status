@@ -1,20 +1,11 @@
 import { Cron } from '@nestjs/schedule';
 import * as fs from 'fs-extra';
 import { AsyncParser } from '@json2csv/node';
-import {
-  CustomMongoClient,
-  CustomValidator,
-  CustomUtils,
-} from '@xxxhand/app-common';
+import { CustomMongoClient, CustomValidator, CustomUtils } from '@xxxhand/app-common';
 import { Inject, Injectable, LoggerService } from '@nestjs/common';
 import { appConf } from './app.config';
 import { MailClient, ISendOptions } from './mail.client';
-import {
-  DEFAULT_LOGGER_FACTORY,
-  DEFAULT_MONGO,
-  DEFAULT_MAILER,
-  DEFAULT_ENCODING,
-} from './app.constants';
+import { DEFAULT_LOGGER_FACTORY, DEFAULT_MONGO, DEFAULT_MAILER, DEFAULT_ENCODING } from './app.constants';
 
 interface IGroupDevice {
   _id: string;
@@ -70,9 +61,7 @@ export class AppService {
     // 取前2小時資料
     const useTime = new Date(Date.now() - 60 * 60 * 2 * 1000);
     // const useTime = new Date(2024, 8, 30);
-    this._Logger.log(
-      'Start to find abnormal devices------------------------------',
-    );
+    this._Logger.log('Start to find abnormal devices------------------------------');
     const aggr: any = [
       {
         $match: {
@@ -102,10 +91,7 @@ export class AppService {
 
     this._Logger.log(JSON.stringify(aggr));
 
-    const gDevices = (await this.db
-      .getCollection('DeviceStatusInfos')
-      .aggregate(aggr)
-      .toArray()) as IGroupDevice[];
+    const gDevices = (await this.db.getCollection('DeviceStatusInfos').aggregate(aggr).toArray()) as IGroupDevice[];
     if (!CustomValidator.nonEmptyArray(gDevices)) {
       this._Logger.log('No devices matched....terminated');
       this._terminate();
@@ -118,20 +104,14 @@ export class AppService {
         $in: gDevices.map((x) => x._id),
       },
     };
-    const oDevices = (await this.db
-      .getCollection('Devices')
-      .find(q)
-      .toArray()) as unknown as IPartialDevice[];
+    const oDevices = (await this.db.getCollection('Devices').find(q).toArray()) as unknown as IPartialDevice[];
     // Find account
     q = {
       accountId: {
         $in: oDevices.map((x) => x.accountId),
       },
     };
-    const oAccounts = (await this.db
-      .getCollection('Accounts')
-      .find(q)
-      .toArray()) as unknown as IPartialAccount[];
+    const oAccounts = (await this.db.getCollection('Accounts').find(q).toArray()) as unknown as IPartialAccount[];
     // compose info
     for (const gDevice of gDevices) {
       const currDevice = oDevices.find((x) => x.sn === gDevice._id);
@@ -152,9 +132,7 @@ export class AppService {
         continue;
       }
 
-      const currAccount = oAccounts.find(
-        (x) => x.accountId === currInfo.accountId,
-      );
+      const currAccount = oAccounts.find((x) => x.accountId === currInfo.accountId);
       if (currAccount) {
         currInfo.email = CustomUtils.fromBase64ToString(currAccount.email);
       }
@@ -163,9 +141,7 @@ export class AppService {
     // Send notify....
     try {
       const outputFile = `scanOtaStatus_${Date.now().toString()}.csv`;
-      const csvContent = await new AsyncParser()
-        .parse(warningInfoAry)
-        .promise();
+      const csvContent = await new AsyncParser().parse(warningInfoAry).promise();
       await fs.writeFile(`./${outputFile}`, csvContent, {
         encoding: DEFAULT_ENCODING,
       });
@@ -182,7 +158,7 @@ export class AppService {
         fileName: outputFile,
         content: fs.createReadStream(`./${outputFile}`, {
           encoding: DEFAULT_ENCODING,
-        }) as unknown as ReadableStream,
+        }),
       });
       await this.mailClient.send(sendOpt);
     } catch (ex) {
@@ -194,8 +170,6 @@ export class AppService {
   private async _terminate(): Promise<void> {
     await this.db.close();
     this._isRunning = false;
-    this._Logger.log(
-      'End to find abnormal devices------------------------------',
-    );
+    this._Logger.log('End to find abnormal devices------------------------------');
   }
 }

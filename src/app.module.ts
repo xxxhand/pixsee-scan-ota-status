@@ -5,11 +5,7 @@ import { appConf } from './app.config';
 import { AppService } from './app.service';
 import { DefaultLoggerService } from './app.logger';
 import { MailClient, IInitialOptions } from './mail.client';
-import {
-  DEFAULT_MONGO,
-  DEFAULT_LOGGER_FACTORY,
-  DEFAULT_MAILER,
-} from './app.constants';
+import { DEFAULT_MONGO, DEFAULT_LOGGER_FACTORY, DEFAULT_MAILER } from './app.constants';
 
 @Module({
   imports: [ScheduleModule.forRoot()],
@@ -31,9 +27,7 @@ import {
     {
       provide: DEFAULT_LOGGER_FACTORY,
       useValue: (context: string): LoggerService => {
-        return new DefaultLoggerService()
-          .useContext(context)
-          .initialFlieTransport(appConf.defaultLoggerPath);
+        return new DefaultLoggerService().useContext(context).initialFlieTransport(appConf.defaultLoggerPath);
       },
     },
     {
