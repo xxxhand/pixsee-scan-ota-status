@@ -43,3 +43,6 @@ credentials
 
 # ignore dirs
 tmp
+
+# Others
+*.csv

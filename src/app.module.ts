@@ -4,7 +4,8 @@ import { CustomMongoClient, CustomDefinition } from '@xxxhand/app-common';
 import { appConf } from './app.config';
 import { AppService } from './app.service';
 import { DefaultLoggerService } from './app.logger';
-import { DEFAULT_MONGO, DEFAULT_LOGGER_FACTORY } from './app.constants';
+import { MailClient, IInitialOptions } from './mail.client';
+import { DEFAULT_MONGO, DEFAULT_LOGGER_FACTORY, DEFAULT_MAILER } from './app.constants';
 
 @Module({
   imports: [ScheduleModule.forRoot()],
@@ -30,6 +31,22 @@ import { DEFAULT_MONGO, DEFAULT_LOGGER_FACTORY } from './app.constants';
           .useContext(context)
           .initialFlieTransport(appConf.defaultLoggerPath);
       },
+    },
+    {
+      provide: DEFAULT_MAILER,
+      useFactory: (): MailClient => {
+        const opt: IInitialOptions = {
+          host: appConf.defaultMailer.host,
+          port: appConf.defaultMailer.port,
+          user: appConf.defaultMailer.user,
+          pass: appConf.defaultMailer.pass,
+          rejectUnauthorized: true,
+          tlsMinVersion: 'TLSv1.2'
+        };
+        const client = new MailClient();
+        client.initialSmtpPool(opt);
+        return client;
+      }
     },
     AppService,
   ],
