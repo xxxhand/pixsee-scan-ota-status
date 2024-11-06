@@ -17,7 +17,7 @@ export interface ISendOptions {
   subject: string;
   text?: string;
   html?: string;
-  attachments?: IAttachement[]
+  attachments?: IAttachement[];
 }
 
 export interface IInitialOptions {
@@ -40,8 +40,10 @@ export class MailClient {
       port: opt.port,
       tls: {
         rejectUnauthorized: opt.rejectUnauthorized,
-        minVersion: CustomValidator.nonEmptyString(opt.tlsMinVersion) ? opt.tlsMinVersion : 'TLSv1.2',
-      }
+        minVersion: CustomValidator.nonEmptyString(opt.tlsMinVersion)
+          ? opt.tlsMinVersion
+          : 'TLSv1.2',
+      },
     };
     if (CustomValidator.nonEmptyString(opt.user)) {
       newOpt.auth = {
@@ -60,24 +62,33 @@ export class MailClient {
     return this._instance.verify();
   }
 
+  public close(): void {
+    console.log('Close mail client');
+    this._instance.close();
+  }
+
   public async send(opts: ISendOptions): Promise<void> {
     const newOpt = {
       from: opts.from,
       to: opts.to,
-      sender: CustomValidator.nonEmptyString(opts.sender) ? opts.sender : opts.from,
+      sender: CustomValidator.nonEmptyString(opts.sender)
+        ? opts.sender
+        : opts.from,
       subject: opts.subject,
       cc: CustomValidator.nonEmptyArray(opts.cc) ? opts.cc : [],
       bcc: CustomValidator.nonEmptyArray(opts.bcc) ? opts.bcc : [],
       text: CustomValidator.nonEmptyString(opts.text) ? opts.text : undefined,
       html: CustomValidator.nonEmptyString(opts.html) ? opts.html : undefined,
-      attachments: []
+      attachments: [],
     };
 
     if (CustomValidator.nonEmptyArray(opts.attachments)) {
-      opts.attachments.forEach((x) => newOpt.attachments.push({
-        filename: x.fileName,
-        content: x.content
-      }));
+      opts.attachments.forEach((x) =>
+        newOpt.attachments.push({
+          filename: x.fileName,
+          content: x.content,
+        }),
+      );
     }
 
     this._instance.sendMail(newOpt).catch((ex) => console.error(ex));

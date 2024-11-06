@@ -5,7 +5,11 @@ import { appConf } from './app.config';
 import { AppService } from './app.service';
 import { DefaultLoggerService } from './app.logger';
 import { MailClient, IInitialOptions } from './mail.client';
-import { DEFAULT_MONGO, DEFAULT_LOGGER_FACTORY, DEFAULT_MAILER } from './app.constants';
+import {
+  DEFAULT_MONGO,
+  DEFAULT_LOGGER_FACTORY,
+  DEFAULT_MAILER,
+} from './app.constants';
 
 @Module({
   imports: [ScheduleModule.forRoot()],
@@ -41,12 +45,12 @@ import { DEFAULT_MONGO, DEFAULT_LOGGER_FACTORY, DEFAULT_MAILER } from './app.con
           user: appConf.defaultMailer.user,
           pass: appConf.defaultMailer.pass,
           rejectUnauthorized: true,
-          tlsMinVersion: 'TLSv1.2'
+          tlsMinVersion: 'TLSv1.2',
         };
         const client = new MailClient();
         client.initialSmtpPool(opt);
         return client;
-      }
+      },
     },
     AppService,
   ],
