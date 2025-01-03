@@ -161,6 +161,7 @@ export class AppService {
         }),
       });
       await this.mailClient.send(sendOpt);
+      fs.unlink(`./${outputFile}`).catch((ex) => this._Logger.error(ex.stack));
     } catch (ex) {
       this._Logger.error(ex.stack);
     } finally {
@@ -168,8 +169,8 @@ export class AppService {
     }
   }
   private async _terminate(): Promise<void> {
-    await this.db.close();
     this._isRunning = false;
     this._Logger.log('End to find abnormal devices------------------------------');
+    this.db.close().catch((ex) => this._Logger.error(ex.stack));
   }
 }
