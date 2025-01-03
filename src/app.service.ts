@@ -161,7 +161,7 @@ export class AppService {
         }),
       });
       await this.mailClient.send(sendOpt);
-      fs.unlink(`./${outputFile}`).catch((ex) => this._Logger.error(ex.stack));
+      // fs.unlink(`./${outputFile}`).catch((ex) => this._Logger.error(ex.stack));
     } catch (ex) {
       this._Logger.error(ex.stack);
     } finally {
